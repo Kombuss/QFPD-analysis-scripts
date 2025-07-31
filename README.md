@@ -8,4 +8,5 @@ Currently in early stage of development.
 
 - Image Processing Toolbox by MathWorks
 - Curve Fitting Toolbox by MathWorks
+- Signal Processing Toolbox by MathWorks
 - cmocean perceptually-uniform colormaps by Chad Greene
