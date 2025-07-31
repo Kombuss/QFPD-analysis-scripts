@@ -7,4 +7,5 @@ Currently in early stage of development.
 ## Necessary Add-Ons
 
 - Image Processing Toolbox by MathWorks
+- Curve Fitting Toolbox by MathWorks
 - cmocean perceptually-uniform colormaps by Chad Greene
