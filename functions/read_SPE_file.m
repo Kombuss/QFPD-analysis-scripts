@@ -33,7 +33,7 @@ data = file.int;                    % Intensity [arb.u.]
 if isempty(background_files) == 0
 
     background_idx = contains({background_files.name}, ['_', num2str(expotime), 's']);  % Searching for file with right expusure time
-    background_file = background_files(background_idx);                     % Saving background file with right exposure time
+    background_file = background_files(background_idx);                                 % Saving background file with right exposure time
 
     background_fullname = fullfile([background_file.folder, '\'], background_file.name);    % Path and name of the file in a single variable
 

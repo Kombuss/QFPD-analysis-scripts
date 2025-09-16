@@ -30,6 +30,6 @@ end
 
 ylabel('Energy (eV)');  % Setting up y axis label
 
-set(gca,'layer','top'); % MOcing axis markers to the surface
+set(gca,'layer','top'); % Moving axis markers to the surface
 
 hold off;               % Finishing futher changes on the same plot
