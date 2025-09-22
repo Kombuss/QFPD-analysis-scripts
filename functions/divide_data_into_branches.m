@@ -6,21 +6,33 @@ function [k, branches_energy, branches] = ...
 % double arrays.
 
 % Determining the correct prominence for finding peaks
+% !!!IDEA!!! (find minimums instead of maximums)
 
 intensity_middle_col = data(:,ceil(size(k,2)/2));               % Extracting middle column of data
 [~, ~, ~, proms] = findpeaks(intensity_middle_col, energy, ...
-    'MinPeakProminence', 0);                                    % Extracting prominence for all praks that this function finds
-min_prak_prominence = std(proms);                               % Defining minimum peak prominence as standard deviation of all prominences
+    'MinPeakProminence', 0);                                    % Extracting prominence for all preks that this function finds
+
+%!!!FIX!!! (change min_peak_prominance so that it's more sensitive)
+
+min_peak_prominence = std(proms);                               % Defining minimum peak prominence as standard deviation of all prominences
 
 % Finding peaks in the middle of dispersion curve for k = 0
 
 [~, E_branches, width_branches, ~] = findpeaks(intensity_middle_col, energy, ...    
-    'MinPeakProminence', min_prak_prominence);                                      % Finding peaks in middle column to know how many branches there are
+    'MinPeakProminence', min_peak_prominence);                                      % Finding peaks in middle column to know how many branches there are
 
 % Designating branch bounderies based on peaks found
 
-branch_bounderies = E_branches - 1.2*width_branches;    % Creating bounderies of branches based on energy and width of the peak fit aproximetly to whole peaks not only slopes
-branch_bounderies = [branch_bounderies; energy(end)];   % Adding highes energy at the end for upper boundery of last branch            
+branch_bounderies = zeros(size(E_branches, 1) + 1, 1);          % Alocating array for branch's bounderies
+branch_bounderies(1) = E_branches(1) - 1.699*width_branches(1); % Setting first ...
+branch_bounderies(end) = energy(end);                           % ... and last energy values as outer bounderies
+
+if size(E_branches, 1) > 1
+    branch_bounderies(2:end-1) = E_branches(2:end) - ...
+        width_branches(2:end).*(E_branches(2:end) - ...
+        E_branches(1:end-1))./(width_branches(1:end-1) + ...
+        width_branches(2:end));                                 % Creating bounderies of branches based on energy and width of the peaks
+end         
 
 % Dividing data matrix and energies into different branches
 

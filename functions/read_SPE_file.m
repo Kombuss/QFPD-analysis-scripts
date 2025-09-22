@@ -44,6 +44,8 @@ else
 end
 
 % Loading grey filter data. For now only for one wavelength
+% !!!FIX!!! Transmission extracted from excel file for each filer based on
+% center wavelength of a measurment
 
 OD05 = 0.41088752;
 OD1 = 0.1631333;
