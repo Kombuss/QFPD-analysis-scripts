@@ -1,35 +1,56 @@
 function [fig] = draw_polariton_spectra(x, energy, data, space)
 
-% This function draws polariton spectra in k-space or r-space based on 
-% wavevector or position on x axis (x) [um^-1], energy [eV], intensity 
-% (data) [arb.u.], numerical aperature (NA) [arb.u.] and type of space. 
-% Function returns figure, on which everything is plotted.
+% draw_polariton_spectra - Plot polariton spectra
+%   This function draws polariton spectra in k-space or r-space
+%
+%   Syntax
+%       draw_polariton_spectra(x, energy, data, space)
+%
+%   Input Arguments
+%       x - Position [px]
+%           vector
+%       energy - Energy [eV]
+%           vector
+%       data - Intensity [arb.u.]
+%           vector
+%       space - space of the data ("kspace" or "rspace")
+%           string
+%
+%   Output Arguments
+%       fig - figure with plotted data
+%           figure
+%
 
-% Creating figure and drawing graph (X: wavevactor or position, Y: energy, C: intensity)
+% Creating figure and plotting all the data
+fig = figure("Visible","off");
+fig.Theme = "light";
+p1 = pcolor(x, energy, data);
 
-fig = figure("Visible","off");  % Creating figure without displaying it
-fig.Theme = "light";            % Setting the figure theme to light
-p1 = pcolor(x, energy, data);   % Ploting pcolor graph on the figure
+% Allowing for further changes on the same plot
+hold on;
 
-hold on;                        % Allowing for futher changes on the same plot
+% Making transparent edges
+set(p1, 'EdgeColor', 'none');
 
-set(p1, 'EdgeColor', 'none');   % Making transparent edges
+% Changing colormap
+colormap(flip(cmocean('ice')));
 
-colormap(flip(cmocean('ice'))); % Changing colormap
+% Creating colorbar
+cb = colorbar(gca, 'eastoutside', 'AxisLocation','out');
+set(cb, 'TickLength', 0.025);
 
-cb = colorbar(gca, 'eastoutside', 'AxisLocation','out');    % Creating colorbar
-set(cb, 'TickLength', 0.025);                               % Changing thicknes of the colorbar
-
-% Setting axes labels
-
-if space == "kspace"                        % Checking which space is plotted and setting up x axis label accordingly
+% Setting x-axis labels based on which space is being plotted
+if space == "kspace"
     xlabel('Wavevector k_{||} (\mum^-^1)');
 elseif space == "rspace"
     xlabel('Position (\mum)');
 end
 
-ylabel('Energy (eV)');  % Setting up y axis label
+% Setting up y-axis label
+ylabel('Energy (eV)');
 
-set(gca,'layer','top'); % Moving axis markers to the surface
+% Moving axis markers to the surface
+set(gca,'layer','top');
 
-hold off;               % Finishing futher changes on the same plot
+% Finishing further changes on the same plot
+hold off;

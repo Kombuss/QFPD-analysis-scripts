@@ -1,68 +1,98 @@
-function [x, energy, data] = read_SPE_file(file_to_analyze, background_files)
+function [x, energy, data] = read_SPE_file(file_to_analyze, bg_files)
 
-% This function reads data from .spe file structure with fields containing
-% file's name and folder and returns position x [px], energy [eV] and 
-% intensity data [arb.u.]. Intensity takes into account expousere time, OD
-% filters and subtract background from the input background file.
+% read_SPE_file - Read .spe file
+%   This function reads data from .spe file structure with fields 
+%   containing file's name and folder. Intensity calculation takes into 
+%   account exposure time, OD filters and subtract background from the 
+%   input background file.
+%
+%   Syntax
+%       [x, energy, data] = read_SPE_file(file_to_analyze, bg_files)
+%       [x, energy, data] = read_SPE_file(file_to_analyze)
+%
+%   Input Arguments
+%       file_to_analyze - Single .spe file
+%           structure with fields containing file's name and folder
+%
+%   Name-Value Arguments
+%       bg_files - All background files
+%           [] (default) | structure with fields containing files' name and
+%           folder
+%
+%   Output Arguments
+%       x - Position [px]
+%           vector
+%       energy - Energy [eV]
+%           vector
+%       data - Intensity [arb.u.]
+%           vector
+%
 
-% Checking if file with background is provided
-
- if ~exist('background_files','var')
-      background_files = [];                                                 % Default background_file value
-      disp(['No background files provided. Analysis proceeding without ' ...
-          'background files']);                                              % Dispaying message
+% Setting the default background variable
+ if ~exist('bg_files','var')
+      bg_files = [];
+      disp(['No background files provided. Analysis proceeding ' ...
+          'without background files']);
  end
 
 % Defining physical constants
-
 h = 4.135667*10^(-15);  % Planck constant [eV*s]
 c = 299792458;          % Speed of light [m/s]
 
 % Loading data from .spe file
+fullname = fullfile([file_to_analyze.folder, '\'], file_to_analyze.name);
+file = loadSPE(fullname);    
 
-fullname = fullfile([file_to_analyze.folder, '\'], file_to_analyze.name);   % Path and name of the file in a single variable
-
-file = loadSPE(fullname);           % Loading data from file being read
+% Extracting necessary variables from the file
 lambda = file.wavelength;           % Wavelength [nm]
 energy = flip(h*c*10^9./lambda);    % Energy [eV]
 expotime = file.expo_time;          % Exposure time [s]
 data = file.int;                    % Intensity [arb.u.]
 
-% Loading background from .spe file
+% Checking if any background files are provided
+if isempty(bg_files) == 0
 
-if isempty(background_files) == 0
-
-    background_idx = contains({background_files.name}, ['_', num2str(expotime), 's']);  % Searching for file with right expusure time
-    background_file = background_files(background_idx);                                 % Saving background file with right exposure time
-
-    background_fullname = fullfile([background_file.folder, '\'], background_file.name);    % Path and name of the file in a single variable
-
-    background = loadSPE(background_fullname);  % Loading background data
-    background_data = background.int;           % Intensity [arb.u.]
+    % Searching for the background file with right exposure time
+    background_idx = contains({bg_files.name}, ['_', num2str(expotime), ...
+        's']);
+    background_file = bg_files(background_idx);
+    background_fullname = fullfile([background_file.folder, '\'], ...
+        background_file.name);
+    
+    % Loading background file and reading its intensity
+    background = loadSPE(background_fullname);
+    background_data = background.int;
 else
-    background_data = 0;                        % If background not found intensity equals zero
+
+    % If background not found, then intensity equals zero
+    background_data = 0;
+    disp(['No background files with the same expurure time as ' ...
+        'analyzing file provided. Analysis proceeding without ' ...
+        'background file']);
 end
 
-% Loading grey filter data. For now only for one wavelength
-% !!!FIX!!! Transmission extracted from excel file for each filer based on
-% center wavelength of a measurment
-
+% Loading grey filter data. For now only for one wavelength (809 nm)
+% !!!FIX!!! (Transmission extracted from excel file for each filer based on
+% center wavelength of a measurment)
 OD05 = 0.41088752;
 OD1 = 0.1631333;
-OD2 = 0.0574673;                % Transmission of filters for 809 nm
+OD2 = 0.0574673;
 OD3 = 0.01297389;
 OD4 = 0.00328358;
 
-filter = 'no_filter';   % Default value for filter varable
+% Creating and setting default value for filter name
+filter = 'no_filter';
 
-if contains(file_to_analyze.name, 'OD') == 1                % Checking if there is OD value in file's name
-    file_name_split = split(file_to_analyze.name, "_");     % Dividing file name to list with "_" as separator
-    OD_idx = find(contains(string(file_name_split), "OD")); % Searching for element with "OD"
-    filter = file_name_split(OD_idx);                       % Saving OD value
-    filter = filter{:}(1:3);                                % Cutting filter string to only 3 characters: "OD#"
+% Checking if OD filter was used. "OD#" should be in file name
+if contains(file_to_analyze.name, 'OD') == 1
+    file_name_split = split(file_to_analyze.name, "_");
+    OD_idx = find(contains(string(file_name_split), "OD"));
+    filter = file_name_split(OD_idx);
+    filter = filter{:}(1:3);
 end
 
-switch filter                       % Setting filter_transmission value 
+% Setting filter transmission value
+switch filter                       
     case 'OD0'
         filter_transmission = OD05;
     case 'OD1'
@@ -87,13 +117,11 @@ end
 
 % Subtracting background, rotating intensity matrix and dividing it by
 % exposure time
+data = data - background_data;
+data(data<0) = 0;
+data = rot90(data);
+data = data/(expotime*filter_transmission);
 
-data = data - background_data;              % Subtracting background intensity
-data(data<0) = 0;                           % Intensity can't be lower than 0
-data = rot90(data);                         % Rotating data matrix
-data = data/(expotime*filter_transmission); % Intensity [arb.u.] divided by exposure time and filter transmission
-
-% Centering data
-
-x = 1:size(data,2);     % X axes [px]
-x = x - size(data,2)/2; % X axes [px] centered at 0
+% Centering x-axis
+x = 1:size(data,2);
+x = x - size(data,2)/2;

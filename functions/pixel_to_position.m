@@ -1,16 +1,40 @@
 function [x, data_cut] = pixel_to_position(x, data, NA, f, dpx, magK, magR)
 
-% This function converts pixels to position based od pixel position (x)
-% [arb.u.], energy [eV], intensity (data) [arb.u.], numerical apeture (NA)
-% [arb.u.], focal length of the lens (f) [mm], pixel size (dpx) [um],
-% k-space magnification (magK) [arb.u.] and r-space magnification. It 
-% returns position (x) [um] and imaged intensity (data_cut) [arb.u.].
+% pixel_to_position - Convert pixel to position
+%   This function converts pixels to position based on parameters of the
+%   setup and measurement.
+%
+%   Syntax
+%       [x, data_cut] = pixel_to_position(x, data, NA, f, dpx, magK, magR)
+%
+%   Input Arguments
+%       x - Position [px]
+%           vector
+%       data - Intensity [arb.u.]
+%           vector
+%       NA - Numerical aperture [arb.u.]
+%           double
+%       f - Focal length of objective [mm]
+%           double
+%       dpx - Pixel size [um]
+%           double
+%       magK - K-space magnification [arb.u.]
+%           double
+%       magR - R-space magnification [arb.u.]
+%           double
+%
+%   Output Arguments
+%       x - Position [um]
+%           vector
+%       data_cut - Intensity [arb.u.]
+%           vector
+%
 
-% Cutting data based on maximum pixel that was imaged and converting pixel
-% to position
+% Cutting data based on maximum pixel that was imaged
+pixel_max = magK*f*NA*10^3/dpx;
+if_x_within_max_pixel = x >= -pixel_max & x <= pixel_max;
+x = x(if_x_within_max_pixel);
+data_cut = data(:, if_x_within_max_pixel);
 
-pixel_max = magK*f*NA*10^3/dpx;                             % Determining the maximum imaged pixel
-if_x_within_max_pixel = x >= -pixel_max & x <= pixel_max;   % Determining which pixels are imaged
-x = x(if_x_within_max_pixel);                               % Cutting unimaged pixels
-data_cut = data(:, if_x_within_max_pixel);                  % Cutting unimaged data
-x = x*dpx/magR/magK;                                        % Calculated position [um]
+% Converting pixels to positions
+x = x*dpx/magR/magK;
