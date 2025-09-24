@@ -1,23 +1,52 @@
 function [fit_result, goodness] = fit_peak(x, y, number_of_peaks, ...
     start_points, type, upper_bounds, lower_bounds)
 
-% This function fits number of gaussian or lorentzian peaks
-% (number_of_peaks and type) to x and y data based on strating points of a
-% fit (start_points). Optionaly you can define upper and lower bonds for 
-% fitting parameters. It returns results of fitting (fit_result) and 
-% goodness of the fit.
+% fit_peak - Fit peaks
+%   This function fits number of gaussian or lorentzian peaks to a given
+%   data
+%
+%   Syntax
+%       [fit_result, goodness] = fit_peak(x, y, number_of_peaks, start_points, type, upper_bounds, lower_bounds)
+%       [fit_result, ~] = fit_peak(x, y, 1, start_points, "gauss")
+%
+%   Input Arguments
+%       x - Input data x-axis
+%           vector
+%       y - Input data y-axis
+%           vector
+%       number_of_peaks - Number of peaks to be fitted
+%           double
+%       start_points - Starting points for the fit
+%           vector of size 1x2*number_of_peaks+1
+%       type - Type of a fit "gauss" or "lorentz"
+%           string
+%
+%   Name-Value Arguments
+%       upper_bounds - Upper bounds for the fit
+%           [] (default) | vector of size 1x2*number_of_peaks+1
+%       lower_bounds - Lower bounds for the fit
+%           [0 0 0 -Inf] (default) | vector of size 1x2*number_of_peaks+1
+%
+%   Output Arguments
+%       fit_results - Results of the fit
+%           cfit
+%       goodness - Goodness of the fit
+%           structure
+%
 
- if ~exist('upper_bounds','var')    % Setting default value for upper bonds
+% Setting default value for upper bonds
+ if ~exist('upper_bounds','var')
       upper_bounds = [];
  end
 
-  if ~exist('lower_bounds','var')   % Setting default value for lower bonds
+ % Setting default value for lower bonds
+ if ~exist('lower_bounds','var')
       lower_bounds = [0 0 0 -inf];
  end
 
-% Defining gauss and lorentz functions for fitting
-% !!!FIX!!! (fittype defined for arbitrary number of peaks by changing strings and lists below in some for loop) 
-
+% Defining gaussian and lorentzian functions for fitting
+% !!!FIX!!! (fittype defined for arbitrary number of peaks by changing 
+% strings and lists below in some for loop) 
 if type == "gauss"
 
     fit_type_1 = fittype('(a/(c*sqrt(pi/2)))*exp(-2*((x-b)/c)^2)+d', ...
@@ -60,7 +89,6 @@ else
 end
 
 % Determining how many peaks to fit and picking fit_type
-
 if number_of_peaks == 1
     fit_type = fit_type_1;
 elseif number_of_peaks == 2
@@ -74,11 +102,9 @@ else
 end
 
 % Setting fitting options
-
 fit_options = fitoptions('Method', 'NonlinearLeastSquares', ...
             'Algorithm', 'Trust-Region', 'StartPoint', start_points, ...
             'Upper', upper_bounds, 'Lower', lower_bounds);
 
-% Fitting data
-
+% Fitting to given data
 [fit_result, goodness] = fit(x, y, fit_type, fit_options);
