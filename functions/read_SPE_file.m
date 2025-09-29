@@ -1,4 +1,4 @@
-function [x, energy, data] = read_SPE_file(file_to_analyze, bg_files)
+function [x, energy, data] = read_SPE_file(file_to_analyze, bg_files, ND_filters)
 
 % read_SPE_file - Read .spe file
 %   This function reads data from .spe file structure with fields 
@@ -18,6 +18,9 @@ function [x, energy, data] = read_SPE_file(file_to_analyze, bg_files)
 %       bg_files - All background files
 %           [] (default) | structure with fields containing files' name and
 %           folder
+%       ND_filters - All files with transmission for OD filters
+%           [] (default) | cell array with cells containing 2 double 
+%           columns: 1st with wavelength [nm] and 2nd with transmission [%]
 %
 %   Output Arguments
 %       x - Position [px]
@@ -28,11 +31,15 @@ function [x, energy, data] = read_SPE_file(file_to_analyze, bg_files)
 %           vector
 %
 
-% Setting the default background variable
+% Setting the default background and OD filter variable
  if ~exist('bg_files','var')
       bg_files = [];
       disp(['No background files provided. Analysis proceeding ' ...
           'without background files']);
+ end
+
+ if ~exist('ND_filters','var')
+      bg_files = [];
  end
 
 % Defining physical constants
@@ -71,46 +78,52 @@ else
         'background file']);
 end
 
-% Loading grey filter data. For now only for one wavelength (809 nm)
-% !!!FIX!!! (Transmission extracted from excel file for each filer based on
-% center wavelength of a measurment)
-OD05 = 0.41088752;
-OD1 = 0.1631333;
-OD2 = 0.0574673;
-OD3 = 0.01297389;
-OD4 = 0.00328358;
+% Checking if ND filters are provided
+if isempty(ND_filters) == 0
+    
+    % Determining central wavelength for gray filters' transmission
+    central_wavelength = lambda(ceil(size(lambda, 1)/2));
 
-% Creating and setting default value for filter name
-filter = 'no_filter';
+    % Loading gray filter data.
+    ND_filters_trans = zeros(size(ND_filters));
+    for i = 1:size(ND_filters, 1)
+        central_wavelength_idx = find(ND_filters{i}(:,1)==central_wavelength);
+        ND_filters_trans(i) = ND_filters{i}(central_wavelength_idx, 2)/100;
+    end
+    
+    % Checking if OD filter was used. "OD#" or "#OD" should be in file name
+    if contains(upper(file_to_analyze.name), 'OD') == 1
+        file_name_split = split(file_to_analyze.name, "_");
+        OD_idx = find(contains(upper(string(file_name_split)), "OD"));
+        filter = file_name_split(OD_idx);
+        filter = filter{:}(1:3);
+    end
+else
 
-% Checking if OD filter was used. "OD#" should be in file name
-if contains(file_to_analyze.name, 'OD') == 1
-    file_name_split = split(file_to_analyze.name, "_");
-    OD_idx = find(contains(string(file_name_split), "OD"));
-    filter = file_name_split(OD_idx);
-    filter = filter{:}(1:3);
+    % If ND filters not found, then setting default value for filter name
+    filter = 'no_filter';
+    disp(['No ND filters files provided. Analysis proceeding without ' ...
+        'considering ND filters']);
 end
 
 % Setting filter transmission value
 switch filter                       
-    case 'OD0'
-        filter_transmission = OD05;
-    case 'OD1'
-        filter_transmission = OD1;
-    case 'OD2'
-        filter_transmission = OD2;
-    case 'OD3'
-        filter_transmission = OD3;
-    case 'OD4'
-        filter_transmission = OD4;
-    case 'OD5'
-        filter_transmission = OD1 * OD4;
-    case 'OD6'
-        filter_transmission = OD2 * OD4;
-    case 'OD7'
-        filter_transmission = OD3 * OD4;
-    case 'OD8'
-        filter_transmission = OD4 * OD4;
+    case {'OD1', '1OD'}
+        filter_transmission = ND_filters_trans(1);
+    case {'OD2', '2OD'}
+        filter_transmission = ND_filters_trans(2);
+    case {'OD3', '3OD'}
+        filter_transmission = ND_filters_trans(3);
+    case {'OD4', '4OD'}
+        filter_transmission = ND_filters_trans(4);
+    case {'OD5', '5OD'}
+        filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
+    case {'OD6', '6OD'}
+        filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
+    case {'OD7', '7OD'}
+        filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
+    case {'OD8', '8OD'}
+        filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
     otherwise
         filter_transmission = 1;
 end
