@@ -1,13 +1,12 @@
 function [x, energy, data] = read_SPE_file(file_to_analyze, bg_files, ND_filters)
 
 % read_SPE_file - Read .spe file
-%   This function reads data from .spe file structure with fields 
-%   containing file's name and folder. Intensity calculation takes into 
-%   account exposure time, OD filters and subtract background from the 
-%   input background file.
+%   This function reads data from .spe file. Intensity calculation takes 
+%   into account exposure time, neutral density filters and subtract 
+%   background from the input background file.
 %
 %   Syntax
-%       [x, energy, data] = read_SPE_file(file_to_analyze, bg_files)
+%       [x, energy, data] = read_SPE_file(file_to_analyze, bg_files, ND_filters)
 %       [x, energy, data] = read_SPE_file(file_to_analyze)
 %
 %   Input Arguments
@@ -16,9 +15,9 @@ function [x, energy, data] = read_SPE_file(file_to_analyze, bg_files, ND_filters
 %
 %   Name-Value Arguments
 %       bg_files - All background files
-%           [] (default) | structure with fields containing files' name and
-%           folder
-%       ND_filters - All files with transmission for OD filters
+%           [] (default) | structure with fields containing filename and
+%           file's folder
+%       ND_filters - All files with transmission for ND filters
 %           [] (default) | cell array with cells containing 2 double 
 %           columns: 1st with wavelength [nm] and 2nd with transmission [%]
 %
@@ -39,7 +38,7 @@ function [x, energy, data] = read_SPE_file(file_to_analyze, bg_files, ND_filters
  end
 
  if ~exist('ND_filters','var')
-      bg_files = [];
+      ND_filters = [];
  end
 
 % Defining physical constants
@@ -81,17 +80,19 @@ end
 % Checking if ND filters are provided
 if isempty(ND_filters) == 0
     
-    % Determining central wavelength for gray filters' transmission
+    % Determining central wavelength for gray filters transmission
     central_wavelength = lambda(ceil(size(lambda, 1)/2));
 
     % Loading gray filter data.
     ND_filters_trans = zeros(size(ND_filters));
     for i = 1:size(ND_filters, 1)
-        central_wavelength_idx = find(ND_filters{i}(:,1)==central_wavelength);
+        central_wavelength_idx = ...
+            find(ND_filters{i}(:,1)==central_wavelength);
         ND_filters_trans(i) = ND_filters{i}(central_wavelength_idx, 2)/100;
     end
     
-    % Checking if OD filter was used. "OD#" or "#OD" should be in file name
+    % Checking if ND filter was used. "OD#" or "#OD" should be in the 
+    % filename
     if contains(upper(file_to_analyze.name), 'OD') == 1
         file_name_split = split(file_to_analyze.name, "_");
         OD_idx = find(contains(upper(string(file_name_split)), "OD"));
@@ -99,7 +100,7 @@ if isempty(ND_filters) == 0
         filter = filter{:}(1:3);
     else
 
-        % If OD filter not used, then setting default value for filter name
+        % If ND filter not used, then setting default value for filter name
         filter = 'no_filter';
     end
 else

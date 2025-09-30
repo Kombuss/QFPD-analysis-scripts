@@ -1,7 +1,8 @@
 function [data_trans] = trapezoidal_transformation(energy, data)
 
 % trapezoidal_transformation - Perform trapezoidal transformation
-%   This function performs trapezoidal transformation of data.
+%   This function performs trapezoidal transformation for a given data to 
+%   account for the energy dependence of the maximum imaging wavevector.
 %
 %   Syntax
 %       [data_trans] = trapezoidal_transformation(energy, data)
@@ -13,7 +14,7 @@ function [data_trans] = trapezoidal_transformation(energy, data)
 %           vector
 %
 %   Output Arguments
-%       data_trans - Intensity [arb.u.]
+%       data_trans - Intensity after transformation [arb.u.]
 %           vector
 %
 

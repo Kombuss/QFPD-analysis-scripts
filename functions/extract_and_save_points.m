@@ -1,6 +1,6 @@
 function [] = extract_and_save_points(k, branches_energy, branches, path, file_name)
 
-% extract_and_save_points_by_peak_fitting - Extract and saving points
+% extract_and_save_points_by_peak_fitting - Extract and save points
 %   This function finds lorentzian peaks of intensity for different 
 %   wavevectors for different branches and saves those fits.
 %
@@ -57,6 +57,8 @@ for i = 1:size(branches, 2)
         % Finding peaks in column j and checking number of peaks found.
         % Because data is already divided into branches, there shouldn't be
         % more than 2 (due to polarization splitting).
+        % !!!NOTE!!! (polarization splitting not taken into account 
+        % further, only one polarization is saved)
         [intensity, E_peak, width_E_peak, ~] = ...
         findpeaks(intensity_one_col, energy_to_fit, ...
         'MinPeakProminence', min_peak_prominence);

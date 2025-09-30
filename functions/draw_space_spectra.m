@@ -1,11 +1,11 @@
-function [fig] = draw_polariton_spectra(x, energy, data, space, fig_visibility)
+function [fig] = draw_space_spectra(x, energy, data, space, fig_visibility)
 
-% draw_polariton_spectra - Plot polariton spectra
-%   This function draws polariton spectra in k-space or r-space
+% draw_space_spectra - Plot polariton spectra
+%   This function draws spectra in k-space or r-space
 %
 %   Syntax
-%       draw_polariton_spectra(x, energy, data, space, fig_visibility)
-%       draw_polariton_spectra(x, energy, data, space)
+%       draw_space_spectra(x, energy, data, space, fig_visibility)
+%       draw_space_spectra(x, energy, data, space)
 %
 %   Input Arguments
 %       x - Position [px]
@@ -14,8 +14,8 @@ function [fig] = draw_polariton_spectra(x, energy, data, space, fig_visibility)
 %           vector
 %       data - Intensity [arb.u.]
 %           vector
-%       space - Space of the data ("kspace" or "rspace")
-%           string
+%       space - Space of the data
+%           "kspace" | "rspace"
 %
 %   Name-Value Arguments
 %       fig_visibility - State of figures visibility
