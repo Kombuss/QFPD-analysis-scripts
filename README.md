@@ -4,7 +4,10 @@ MATLAB® live script for bacis analysis of dispersion (k-space) and real-space e
 
 ## Instalation
 
-To be completed soon.
+1. Download repository and unpack compressed folder.
+2. Open **`Momentum_and_real_space_data_analysis.mlx`** in MATLAB®.
+3. Go to HOME, then Set Path. Click Add Folder with Subfolders and add folder that you unpacked.
+4. Script should be ready to run.
 
 ### Necessary MATLAB® Add-Ons
 
