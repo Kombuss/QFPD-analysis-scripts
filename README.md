@@ -51,8 +51,7 @@ This project uses third-party components distributed under other licenses.
 See [LICENSE_THIRD_PARTY](./LICENSE_THIRD_PARTY) for details.
 
 ### In particular:
-- The MATLAB® function **`loadSPE.m`** authored by **Zhaorong Wang (2016)**, distributed under the BSD 2-Clause License.  
-  It has been used in this repository.
+- The MATLAB® function **`loadSPE.m`** authored by **Zhaorong Wang (2016)**, distributed under the BSD 2-Clause License. It has been used in this repository.
 
 ## Acknowledgments
 
