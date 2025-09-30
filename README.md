@@ -1,5 +1,8 @@
 # Momentum and real space data analysis
 
+> [!WARNING]
+> Script still at development/testing stage. Keep in mind that code is not thoroughly tested yet and error handling will be added. Therefore all comments, suggestions and bug reports are welcome.
+
 MATLAB® live script for basic analysis of dispersion (k-space) and real-space energy profile (r-space) data in .spe files. Created for the usage of the Quantum Fluids in Photonic Devices research group of Wrocław University of Science and Technology. Mainly for analyzing exciton-polariton dispersion.
 
 ## Instalation
