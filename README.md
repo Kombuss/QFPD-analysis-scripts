@@ -1,16 +1,23 @@
 # Momentum and real space data analysis
 
 > [!WARNING]
-> Script still at development/testing stage. Keep in mind that the code is not thoroughly tested yet, and error handling will be added. Therefore, all comments,  suggestions, and bug reports are welcome.
+> Script still at development/testing stage.
+> Keep in mind that the code is not thoroughly tested yet, and error handling will be added. Therefore, all comments,  suggestions, and bug reports are welcome.
 
-MATLAB® live script for basic analysis of dispersion (k-space) and real-space energy profile (r-space) data in .spe files. Created for the usage of the Quantum Fluids in Photonic Devices research group of Wrocław University of Science and Technology. Mainly for analyzing exciton-polariton dispersion.
+MATLAB® live script for basic analysis of dispersion (k-space) and real-space energy profile (r-space) data in .spe files. 
+Created for the usage of the Quantum Fluids in Photonic Devices research group of Wrocław University of Science and Technology. 
+Mainly for analyzing exciton-polariton dispersion.
 
 ## Instalation
 
+> [!IMPORTANT]
+> The script was written in MATLAB® R2025a version, so it should be compatible with it and with future versions.
+
+Instalation process:
 1. Download the repository and unpack the compressed folder.
 2. Open **`Momentum_and_real_space_data_analysis.mlx`** in MATLAB®.
-3. Go to HOME, then Set Path. Click Add Folder with Subfolders and add the folder that you unpacked.
-4. Add necessary add-ons listed below.
+3. Go to 'HOME', then 'Set Path'. Click 'Add Folder with Subfolders' and add the folder that you unpacked.
+4. Add necessary add-ons listed below to MATLAB®.
 5. The script should be ready to run.
 
 ### Necessary MATLAB® Add-Ons
@@ -22,7 +29,12 @@ MATLAB® live script for basic analysis of dispersion (k-space) and real-space e
 
 ## Usage
 
-Script can be used for:
+Whole functionality is avaliable from **`Momentum_and_real_space_data_analysis.mlx`** live script. 
+There files for analysis can be picked, options set, and actions picked.
+Both the main script and all of the functions are discribed in their files.
+Functions can be used separately from the script for other scripts of your own.
+
+The live script can be used for:
 - Reading data in .spe files and correcting it by taking into account background data, using ND filters, and measurement conditions
 - Transforming data from pixel domain to wavevector/position domain
 - Plotting data and saving plotted figures
