@@ -97,6 +97,10 @@ if isempty(ND_filters) == 0
         OD_idx = find(contains(upper(string(file_name_split)), "OD"));
         filter = file_name_split(OD_idx);
         filter = filter{:}(1:3);
+    else
+
+        % If OD filter not used, then setting default value for filter name
+        filter = 'no_filter';
     end
 else
 
