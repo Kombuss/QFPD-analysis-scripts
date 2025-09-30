@@ -4,7 +4,7 @@ MATLAB® live script for bacis analysis of dispersion (k-space) and real-space e
 
 ## Instalation
 
-To be completed.
+To be completed soon.
 
 ### Necessary MATLAB® Add-Ons
 
