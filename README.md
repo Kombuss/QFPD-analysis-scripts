@@ -1,17 +1,17 @@
 # Momentum and real space data analysis
 
 > [!WARNING]
-> Script still at development/testing stage. Keep in mind that code is not thoroughly tested yet and error handling will be added. Therefore all comments, suggestions and bug reports are welcome.
+> Script still at development/testing stage. Keep in mind that the code is not thoroughly tested yet, and error handling will be added. Therefore, all comments,  suggestions, and bug reports are welcome.
 
 MATLAB® live script for basic analysis of dispersion (k-space) and real-space energy profile (r-space) data in .spe files. Created for the usage of the Quantum Fluids in Photonic Devices research group of Wrocław University of Science and Technology. Mainly for analyzing exciton-polariton dispersion.
 
 ## Instalation
 
-1. Download repository and unpack compressed folder.
+1. Download the repository and unpack the compressed folder.
 2. Open **`Momentum_and_real_space_data_analysis.mlx`** in MATLAB®.
-3. Go to HOME, then Set Path. Click Add Folder with Subfolders and add folder that you unpacked.
-4. Add necessery add-ons listed below.
-5. Script should be ready to run.
+3. Go to HOME, then Set Path. Click Add Folder with Subfolders and add the folder that you unpacked.
+4. Add necessary add-ons listed below.
+5. The script should be ready to run.
 
 ### Necessary MATLAB® Add-Ons
 
@@ -23,10 +23,10 @@ MATLAB® live script for basic analysis of dispersion (k-space) and real-space e
 ## Usage
 
 Script can be used for:
-- Reading data in .spe files and correction it by taking into account background data, used ND filters and measurement conditions
+- Reading data in .spe files and correcting it by taking into account background data, using ND filters, and measurement conditions
 - Transforming data from pixel domain to wavevector/position domain
 - Plotting data and saving plotted figures
-- Extracting points of high intensity for futher analysis in another softwear such as OriginPro®
+- Extracting points of high intensity for further analysis in another software such as OriginPro®
 
 ### Things to implement
 
