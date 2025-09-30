@@ -1,13 +1,14 @@
 # Momentum and real space data analysis
 
-MATLAB® live script for bacis analysis of dispersion (k-space) and real-space energy profile (r-space) data in .spe files. Created for usage of Quantum fluids in photonic devices research group of Wrocław University of Science and Technology.
+MATLAB® live script for basic analysis of dispersion (k-space) and real-space energy profile (r-space) data in .spe files. Created for the usage of the Quantum Fluids in Photonic Devices research group of Wrocław University of Science and Technology. Mainly for analyzing exciton-polariton dispersion.
 
 ## Instalation
 
 1. Download repository and unpack compressed folder.
 2. Open **`Momentum_and_real_space_data_analysis.mlx`** in MATLAB®.
 3. Go to HOME, then Set Path. Click Add Folder with Subfolders and add folder that you unpacked.
-4. Script should be ready to run.
+4. Add necessery add-ons listed below.
+5. Script should be ready to run.
 
 ### Necessary MATLAB® Add-Ons
 
@@ -26,11 +27,15 @@ Script can be used for:
 
 ### Things to implement
 
-- [ ] R-space and K-space image (openslit) visualization
+- [ ] R-space and k-space image (openslit) visualization
 - [ ] Generating animation of plotted graphs
 - [ ] Plotting extracted points onto the figures
-- [ ] Plotting fit results from OriginPro® onto the figures
+- [ ] Plotting dispersion fit results onto the figures
 - [ ] Power series analysis
+
+## Authors
+
+- **Piotr Sieradzki** - [Kombuss](https://github.com/Kombuss)
 
 ## License
 
@@ -45,4 +50,8 @@ See [LICENSE_THIRD_PARTY](./LICENSE_THIRD_PARTY) for details.
 ### In particular:
 - The MATLAB® function **`loadSPE.m`** authored by **Zhaorong Wang (2016)**, distributed under the BSD 2-Clause License.  
   It has been used in this repository.
+
+## Acknowledgments
+
+- Special thanks to members of the Quantum Fluids in Photonic Devices research group at WUST for parts of their code, helpful suggestions and comments, and substantive support!
 
