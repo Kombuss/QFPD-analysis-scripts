@@ -60,7 +60,7 @@ FIles with background data (.spe):
 - All strings should be separated by: "_"
 - Example: bg_10s.spe
 
-Files with neutral density filter transmission data from [Thorlabs](https://www.thorlabs.com) (.xlsx):
+Files with neutral density filter transmission data from [Thorlabs®](https://www.thorlabs.com) (.xlsx):
 - Forth character is a single number indicationg optical density value
 - Example: NE530B-B.xlsx
 
