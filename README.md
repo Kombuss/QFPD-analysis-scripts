@@ -1,4 +1,4 @@
-Momentum and real space data analysis
+# Momentum and real space data analysis
 
 > [!WARNING]
 > Script still at development/testing stage.
