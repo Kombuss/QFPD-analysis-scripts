@@ -1,4 +1,4 @@
-# Momentum and real space data analysis
+Momentum and real space data analysis
 
 > [!WARNING]
 > Script still at development/testing stage.
@@ -10,7 +10,7 @@ Mainly for analyzing exciton-polariton dispersion.
 
 ## Instalation
 
-> [!IMPORTANT]
+> [!NOTE]
 > The script was written in MATLAB® R2025a version, so it should be compatible with it and with future versions.
 
 Instalation process:
@@ -39,6 +39,31 @@ The live script can be used for:
 - Transforming data from pixel domain to wavevector/position domain
 - Plotting data and saving plotted figures
 - Extracting points of high intensity for further analysis in another software such as OriginPro®
+
+### File naming standard
+
+> [!IMPORTANT]
+> Correct file names are necessary for script to function correctly.
+
+This is how different files should be named, # indicates number:
+
+Files with data for analysis (.spe):
+- First 3 characters: "##_" - for numbering
+- Somewhere in the name: "kspace" | "rspace" - indicating measured space
+- If neutral density filter was used somewhere in the name: "OD#" | "#OD" - optical density value
+- All strings should be separated by: "_"
+- Example: 05_kspace_2,2mW_l766nm_1200_c810nm_15s_longpass800_FES800_up7,05mm_lr22,7mm_OD4.spe
+
+FIles with background data (.spe):
+- First string: "bg" | "bck" | "background" - background file indicator
+- Somewhere in the name: #s | ##s - exposure time
+- All strings should be separated by: "_"
+- Example: bg_10s.spe
+
+Files with neutral density filter transmission data from [Thorlabs](https://www.thorlabs.com) (.xlsx):
+- Forth character is a single number indicationg optical density value
+- Example: NE530B-B.xlsx
+
 
 ### Things to implement
 
