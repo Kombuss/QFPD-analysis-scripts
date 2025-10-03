@@ -91,13 +91,18 @@ if isempty(ND_filters) == 0
         ND_filters_trans(i) = ND_filters{i}(central_wavelength_idx, 2)/100;
     end
     
-    % Checking if ND filter was used. "OD#" or "#OD" should be in the 
-    % filename
+    % Checking if ND filter was used. "OD#" | "#OD" | "ND#" | "#ND" | 
+    % should be in the filename
     if contains(upper(file_to_analyze.name), 'OD') == 1
         file_name_split = split(file_to_analyze.name, "_");
         OD_idx = find(contains(upper(string(file_name_split)), "OD"));
         filter = file_name_split(OD_idx);
-        filter = filter{:}(1:3);
+        filter = upper(filter{:}(1:3));
+    elseif contains(upper(file_to_analyze.name), 'ND') == 1
+        file_name_split = split(file_to_analyze.name, "_");
+        OD_idx = find(contains(upper(string(file_name_split)), "ND"));
+        filter = file_name_split(OD_idx);
+        filter = upper(filter{:}(1:3));
     else
 
         % If ND filter not used, then setting default value for filter name
@@ -113,21 +118,21 @@ end
 
 % Setting filter transmission value
 switch filter                       
-    case {'OD1', '1OD'}
+    case {'OD1', '1OD', 'ND1', '1ND'}
         filter_transmission = ND_filters_trans(1);
-    case {'OD2', '2OD'}
+    case {'OD2', '2OD', 'ND2', '2ND'}
         filter_transmission = ND_filters_trans(2);
-    case {'OD3', '3OD'}
+    case {'OD3', '3OD', 'ND3', '3ND'}
         filter_transmission = ND_filters_trans(3);
-    case {'OD4', '4OD'}
+    case {'OD4', '4OD', 'ND4', '4ND'}
         filter_transmission = ND_filters_trans(4);
-    case {'OD5', '5OD'}
+    case {'OD5', '5OD', 'ND5', '5ND'}
         filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
-    case {'OD6', '6OD'}
+    case {'OD6', '6OD', 'ND6', '6ND'}
         filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
-    case {'OD7', '7OD'}
+    case {'OD7', '7OD', 'ND7', '7ND'}
         filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
-    case {'OD8', '8OD'}
+    case {'OD8', '8OD', 'ND8', '8ND'}
         filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
     otherwise
         filter_transmission = 1;
