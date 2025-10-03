@@ -58,9 +58,13 @@ data = file.int;                    % Intensity [arb.u.]
 % Checking if any background files are provided
 if isempty(bg_files) == 0
 
+    % Setting possible string in filename format
+    possible_expotime_string = [string([num2str(expotime), 's']), ...
+        string([num2str(expotime*1000), 'ms']), ...
+        string([num2str(expotime*1000*1000), 'us'])];
+
     % Searching for the background file with right exposure time
-    background_idx = contains({bg_files.name}, ['_', num2str(expotime), ...
-        's']);
+    background_idx = contains({bg_files.name}, possible_expotime_string);
     background_file = bg_files(background_idx);
     background_fullname = fullfile([background_file.folder, '\'], ...
         background_file.name);
