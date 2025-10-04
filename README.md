@@ -56,8 +56,9 @@ Files with data for analysis (.spe):
 
 FIles with background data (.spe):
 - First string: "bg" | "bck" | "background" - background file indicator
-- Somewhere in the name: #...#s | #...#ms | #...#us | - exposure time
-- All strings should be separated by: "_"
+- Somewhere in the name: "#...#s" | "#...#ms" | "#...#us" | - exposure time
+- All strings should be separated by: "_" or "-"
+- Time should be written with "," | "p", not "."
 - Example: bg_10s.spe
 
 Files with neutral density filter transmission data from [Thorlabs®](https://www.thorlabs.com) (.xlsx):
