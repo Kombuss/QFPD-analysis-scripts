@@ -18,8 +18,9 @@ function [x, energy, data] = read_SPE_file(file_to_analyze, bg_files, ND_filters
 %           [] (default) | structure with fields containing filename and
 %           file's folder
 %       ND_filters - All files with transmission for ND filters
-%           [] (default) | cell array with cells containing 2 double 
-%           columns: 1st with wavelength [nm] and 2nd with transmission [%]
+%           [] (default) | cell array with two cells 1st containing OD 
+%           values of a filter and 2nd two double columns: 1st with 
+%           wavelength [nm] and 2nd with transmission [%]
 %
 %   Output Arguments
 %       x - Position [px]
@@ -74,7 +75,8 @@ if isempty(bg_files) == 0
         string(['-' ,num2str(expotime*1000*1000), 'us'])],'.','p')];
 
     % Searching for the background file with right exposure time
-    background_idx = contains({bg_files.name}, possible_expotime_string);
+    background_idx = contains(lower({bg_files.name}), ...
+        possible_expotime_string);
     background_file = bg_files(background_idx);
     background_fullname = fullfile([background_file.folder, '\'], ...
         background_file.name);
@@ -104,7 +106,7 @@ end
 
 % Checking if ND filters are provided
 if isempty(ND_filters) == 0
-    
+
     % Determining central wavelength for gray filters transmission
     central_wavelength = ceil(lambda(ceil(size(lambda, 1)/2)));
 
@@ -112,55 +114,75 @@ if isempty(ND_filters) == 0
     ND_filters_trans = zeros(size(ND_filters));
     for i = 1:size(ND_filters, 1)
         central_wavelength_idx = ...
-            find(ND_filters{i}(:,1)==central_wavelength);
-        ND_filters_trans(i) = ND_filters{i}(central_wavelength_idx, 2)/100;
+            find(ND_filters{i,2}(:,1) == central_wavelength);
+        ND_filters_trans(i,2) = ...
+        ND_filters{i,2}(central_wavelength_idx, 2)/100;
+        ND_filters_trans(i,1) = ND_filters{i,1};
     end
-    
+
     % Checking if ND filter was used. "OD#" | "#OD" | "ND#" | "#ND" | 
     % should be in the filename
     if contains(upper(file_to_analyze.name), 'OD') == 1
         file_name_split = split(file_to_analyze.name, "_");
         OD_idx = find(contains(upper(string(file_name_split)), "OD"));
-        filter = file_name_split(OD_idx);
-        filter = upper(filter{:}(1:3));
+        filter = upper(file_name_split(OD_idx));
+        if contains(filter, '.SPE')
+            filter = upper(filter{:}(1:end-4));
+        end
+
+        % Unifying fraction format
+        filter = strrep(filter, ',', '.');
+        filter = strrep(filter, 'P', '.');
+        
+        % Extracting just the OD value
+        filter = str2double(regexprep(filter, 'OD', ''));
+
     elseif contains(upper(file_to_analyze.name), 'ND') == 1
         file_name_split = split(file_to_analyze.name, "_");
         OD_idx = find(contains(upper(string(file_name_split)), "ND"));
-        filter = file_name_split(OD_idx);
-        filter = upper(filter{:}(1:3));
+        filter = upper(file_name_split(OD_idx));
+        if contains(filter, '.SPE')
+            filter = upper(filter{:}(1:end-4));
+        end
+
+        % Unifying fraction format
+        filter = strrep(filter, ',', '.');
+        filter = strrep(filter, 'P', '.');
+
+        % Extracting just the OD value
+        filter = str2double(regexprep(filter, 'ND', ''));
     else
 
         % If ND filter not used, then setting default value for filter name
-        filter = 'no_filter';
+        filter = 0;
     end
 else
 
     % If ND filters not found, then setting default value for filter name
-    filter = 'no_filter';
+    filter = 0;
     disp(['No ND filters files provided. Analysis proceeding without ' ...
         'considering ND filters']);
 end
 
 % Setting filter transmission value
-switch filter                       
-    case {'OD1', '1OD', 'ND1', '1ND'}
-        filter_transmission = ND_filters_trans(1);
-    case {'OD2', '2OD', 'ND2', '2ND'}
-        filter_transmission = ND_filters_trans(2);
-    case {'OD3', '3OD', 'ND3', '3ND'}
-        filter_transmission = ND_filters_trans(3);
-    case {'OD4', '4OD', 'ND4', '4ND'}
-        filter_transmission = ND_filters_trans(4);
-    case {'OD5', '5OD', 'ND5', '5ND'}
-        filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
-    case {'OD6', '6OD', 'ND6', '6ND'}
-        filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
-    case {'OD7', '7OD', 'ND7', '7ND'}
-        filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
-    case {'OD8', '8OD', 'ND8', '8ND'}
-        filter_transmission = ND_filters_trans(1) * ND_filters_trans(4);
-    otherwise
-        filter_transmission = 1;
+filter_idx = find([ND_filters_trans(:,1)] == filter);
+if isempty(filter_idx) == 0
+    filter_transmission = ND_filters_trans(filter_idx,2);
+
+% If OD is grater than the maximum value of OD in folder with ND filters, 
+% then assumption is made, that maxND was used and some additional filter
+elseif fix(filter/max([ND_filters_trans(:,1)])) ~= 0 && ~isnan(filter)
+    filter_idx = find([ND_filters_trans(:,1)] == ...
+        max([ND_filters_trans(:,1)]));
+    filter_transmission = ND_filters_trans(filter_idx,2);
+    filter_idx = find([ND_filters_trans(:,1)] == ...
+        mod(filter,max([ND_filters_trans(:,1)])));
+    filter_transmission = ...
+    filter_transmission*ND_filters_trans(filter_idx,2);
+else
+    filter_transmission = 1;
+    disp(['No ND filters files found with the same OD value as in ' ...
+        'measurement'])
 end
 
 % Subtracting background, rotating intensity matrix and dividing it by
