@@ -48,13 +48,25 @@ if size(E_branches, 1) > 1
         width_branches(2:end).*(E_branches(2:end) - ...
         E_branches(1:end-1))./(width_branches(1:end-1) + ...
         width_branches(2:end));
-end         
+end
 
 % Dividing data and energies into different branches
 branches = {size(branch_bounderies)};
 branches_energy = {size(branch_bounderies)};
 for i = 1:(size(branch_bounderies, 1)-1)
-    branch_energy_log = energy(:) >= branch_bounderies(i) & energy(:) <= branch_bounderies(i+1);
+    branch_energy_log = energy(:) >= branch_bounderies(i) & energy(:) ...
+    <= branch_bounderies(i+1);
     branches_energy{i} = energy(branch_energy_log);
     branches{i} = data(branch_energy_log, 1:end);
+end
+
+% Matrix concatenation for branches with less than 10 elements
+for i = 2:size(branches, 2)
+    if ((size(branches{i-1}, 1) < 10) | (size(branches{i}, 1) < 10))
+        branches(i) = {[[branches{i-1}];[branches{i}]]};
+        branches(i-1) = [];
+        branches_energy(i) = ...
+            {[[branches_energy{i-1}];[branches_energy{i}]]};
+        branches_energy(i-1) = [];
+    end
 end

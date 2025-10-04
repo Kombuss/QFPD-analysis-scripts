@@ -59,19 +59,40 @@ data = file.int;                    % Intensity [arb.u.]
 if isempty(bg_files) == 0
 
     % Setting possible string in filename format
-    possible_expotime_string = [string([num2str(expotime), 's']), ...
-        string([num2str(expotime*1000), 'ms']), ...
-        string([num2str(expotime*1000*1000), 'us'])];
+    possible_expotime_string = ...
+        [strrep([string(['_' ,num2str(expotime), 's']), ...
+        string(['_' ,num2str(expotime*1000), 'ms']), ...
+        string(['_' ,num2str(expotime*1000*1000), 'us'])], '.', ','), ...
+        strrep([string(['_' ,num2str(expotime), 's']), ...
+        string(['_' ,num2str(expotime*1000), 'ms']), ...
+        string(['_' ,num2str(expotime*1000*1000), 'us'])],'.','p'), ...
+        strrep([string(['-' ,num2str(expotime), 's']), ...
+        string(['-' ,num2str(expotime*1000), 'ms']), ...
+        string(['-' ,num2str(expotime*1000*1000), 'us'])], '.', ','), ...
+        strrep([string(['-' ,num2str(expotime), 's']), ...
+        string(['-' ,num2str(expotime*1000), 'ms']), ...
+        string(['-' ,num2str(expotime*1000*1000), 'us'])],'.','p')];
 
     % Searching for the background file with right exposure time
     background_idx = contains({bg_files.name}, possible_expotime_string);
     background_file = bg_files(background_idx);
     background_fullname = fullfile([background_file.folder, '\'], ...
         background_file.name);
-    
-    % Loading background file and reading its intensity
-    background = loadSPE(background_fullname);
-    background_data = background.int;
+
+    % Checking if background file with proper exposure time was found
+    if isempty(background_file)
+
+        % If background not found, then intensity equals zero
+        background_data = 0;
+        disp(['No background files with the same expurure time as ' ...
+            'analyzing file provided. Analysis proceeding without ' ...
+            'background file']);
+    else
+
+        % Loading background file and reading its intensity
+        background = loadSPE(background_fullname);
+        background_data = background.int;
+    end
 else
 
     % If background not found, then intensity equals zero
@@ -85,7 +106,7 @@ end
 if isempty(ND_filters) == 0
     
     % Determining central wavelength for gray filters transmission
-    central_wavelength = lambda(ceil(size(lambda, 1)/2));
+    central_wavelength = ceil(lambda(ceil(size(lambda, 1)/2)));
 
     % Loading gray filter data.
     ND_filters_trans = zeros(size(ND_filters));
