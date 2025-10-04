@@ -51,18 +51,19 @@ Files with data for analysis (.spe):
 - First 3 characters: "##_" - for numbering
 - Somewhere in the name: "kspace" | "k-space" | "k_space" | "rspace" | "r-space" | "r_space" - indicating measured space
 - If neutral density filter was used somewhere in the name: "OD#" | "#OD" | "ND#" | "#ND" - optical density value
+- Fraction optical density values should be separeted by: "." | "," | "p"
 - All strings should be separated by: "_"
 - Example: 05_kspace_2,2mW_l766nm_1200_c810nm_15s_longpass800_FES800_up7,05mm_lr22,7mm_OD4.spe
 
-FIles with background data (.spe):
+Files with background data (.spe):
 - First string: "bg" | "bck" | "background" - background file indicator
 - Somewhere in the name: "#...#s" | "#...#ms" | "#...#us" | - exposure time
 - All strings should be separated by: "_" or "-"
-- Time should be written with "," | "p", not "."
-- Example: bg_10s.spe
+- Franction time should be separeted by: "," | "p", not "."
+- Example: bg_0p5s.spe
 
 Files with neutral density filter transmission data from [Thorlabs®](https://www.thorlabs.com) (.xlsx):
-- Forth character is a single number indicationg optical density value
+- Forth and fifth characters are units and tenths of an OD value of a filter
 - Example: NE530B-B.xlsx
 
 
