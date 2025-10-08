@@ -86,9 +86,8 @@ if isempty(bg_files) == 0
 
         % If background not found, then intensity equals zero
         background_data = 0;
-        disp(['No background files with the same expurure time as ' ...
-            'analyzing file provided. Analysis proceeding without ' ...
-            'background file']);
+        disp(['No ',num2str(expotime) , 's background file was found. ' ...
+            'Analysis will proceed without background file']);
     else
 
         % Loading background file and reading its intensity
@@ -99,9 +98,8 @@ else
 
     % If background not found, then intensity equals zero
     background_data = 0;
-    disp(['No background files with the same expurure time as ' ...
-        'analyzing file provided. Analysis proceeding without ' ...
-        'background file']);
+    disp(['No ',num2str(expotime) , 's background file was found. ' ...
+        'Analysis will proceed without background file']);
 end
 
 % Checking if ND filters are provided
@@ -179,10 +177,11 @@ elseif fix(filter/max([ND_filters_trans(:,1)])) ~= 0 && ~isnan(filter)
         mod(filter,max([ND_filters_trans(:,1)])));
     filter_transmission = ...
     filter_transmission*ND_filters_trans(filter_idx,2);
+elseif filter ~= 0
+    filter_transmission = 1;
+    disp(['No ND', num2str(filter), ' filter file found'])
 else
     filter_transmission = 1;
-    disp(['No ND filters files found with the same OD value as in ' ...
-        'measurement'])
 end
 
 % Subtracting background, rotating intensity matrix and dividing it by
