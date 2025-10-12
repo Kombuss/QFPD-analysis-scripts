@@ -39,6 +39,7 @@ The live script can be used for:
 - Transforming data from pixel domain to wavevector/position domain
 - Plotting data and saving plotted figures
 - Extracting points of high intensity for further analysis in another software such as OriginPro®
+- Plotting extracted points onto the figures and saving them
 
 ### File naming standard
 
@@ -71,7 +72,7 @@ Files with neutral density filter transmission data from [Thorlabs®](https://ww
 
 - [ ] R-space and k-space image (openslit) visualization
 - [ ] Generating animation of plotted graphs
-- [ ] Plotting extracted points onto the figures
+- [x] Plotting extracted points onto the figures
 - [ ] Plotting dispersion fit results onto the figures
 - [ ] Power series analysis
 
