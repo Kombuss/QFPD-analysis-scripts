@@ -58,7 +58,7 @@ Files with data for analysis (.spe):
 
 Files with background data (.spe):
 - First string: "bg" | "bck" | "background" - background file indicator
-- Somewhere in the name: "#...#s" | "#...#ms" | "#...#us" | - exposure time
+- Somewhere in the name: "#...#s" | "#...#ms" | "#...#us" - exposure time
 - All strings should be separated by: "_" or "-"
 - Franction time should be separeted by: "," | "p", not "."
 - Example: bg_0p5s.spe
