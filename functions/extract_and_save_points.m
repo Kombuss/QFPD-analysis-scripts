@@ -1,4 +1,4 @@
-function [] = extract_and_save_points(k, branches_energy, branches, path, file_name)
+function [] = extract_and_save_points(k, branches_energy, branches, path, file_name, extract_points_sensitivity)
 
 % extract_and_save_points_by_peak_fitting - Extract and save points
 %   This function finds lorentzian peaks of intensity for different 
@@ -20,6 +20,15 @@ function [] = extract_and_save_points(k, branches_energy, branches, path, file_n
 %       file_name - name of a file from which points are extracted
 %           char
 %
+%   Name-Value Arguments
+%       extract_points_sensitivity - value of points extraction sensitivity
+%           0.15 (default) | double          
+%
+
+% Setting the default extract points sensitivity
+ if ~exist('extract_points_sensitivity','var')
+      extract_points_sensitivity = 0.15;
+ end
 
 % Iterating through all branches
 for i = 1:size(branches, 2)
@@ -40,17 +49,15 @@ for i = 1:size(branches, 2)
 
     % Iterating through columns of intensity for different wavevectors  
     for j = 1:size(data_to_fit, 2)
-        
-        % Determining the correct prominence for finding peaks
-        %!!!NOTE!!! (tune this 95% for optimal data extraction)
+
+        % Finding proper minimum peak prominence
+
         intensity_one_col = data_to_fit(:, j);
         [~, ~, ~, proms] = findpeaks(intensity_one_col, energy_to_fit, ...
             'MinPeakProminence', 0);
-        proms_sorted = sort(proms);
-        cum_sum_proms = cumsum(proms_sorted);
-        threshold_idx = find(cum_sum_proms >= 0.95*sum(proms_sorted), 1);
-        min_peak_prominence = proms_sorted(threshold_idx);
-        if isempty(min_peak_prominence)
+        min_peak_prominence = max(proms);
+        if isempty(min_peak_prominence) || ...
+                extract_points_sensitivity*min_peak_prominence<mean(proms)
             min_peak_prominence = 0;
         end
 
@@ -59,20 +66,25 @@ for i = 1:size(branches, 2)
         % more than 2 (due to polarization splitting).
         % !!!NOTE!!! (polarization splitting not taken into account 
         % further, only one polarization is saved)
-        [intensity, E_peak, width_E_peak, ~] = ...
+
+        [intensity, E_peak, width_E_peak, prom] = ...
         findpeaks(intensity_one_col, energy_to_fit, ...
         'MinPeakProminence', min_peak_prominence);
-        if size(E_peak) == 1                                            
-            number_of_peaks = 1;
-        elseif size(E_peak) == 2
-            number_of_peaks = 2;
-        else
+        if size(E_peak, 1) == 0 || min_peak_prominence==0
             fprintf(open_file, ...
                 ['%20s\t %20s\t %20s\t %20s\t %20s\t %20s\t %20s\t ' ...
                 '%20s\t \n'], num2str(k(j),15), num2str(''), ...
                 num2str(''), num2str(''), num2str(''), num2str(''), ...
                 num2str(''), num2str(''));                                  
             continue;
+        elseif size(E_peak, 1) == 1
+            number_of_peaks = 1;
+        else
+            max_prom_idx = find(prom==max(prom));
+            intensity = intensity(max_prom_idx);
+            E_peak = E_peak(max_prom_idx);
+            width_E_peak = width_E_peak(max_prom_idx);
+            number_of_peaks = 1;
         end
         
         % Setting fit starting points

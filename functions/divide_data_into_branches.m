@@ -26,19 +26,25 @@ function [k, branches_energy, branches] = divide_data_into_branches(k, energy, d
 
 % Determining the correct prominence for finding peaks in middle column
 % !!!IDEA!!! (find minimums instead of maximums)
-% !!!NOTE!!! (change min_peak_prominance so that it's a little more 
-% sensitive. Maybe min_peak_prominance = mean(data('all'))-min(data('all'))
-% or something like that)
 intensity_middle_col = data(:,ceil(size(k, 2)/2));
 [~, ~, ~, proms] = findpeaks(smooth(intensity_middle_col), energy, ...
     'MinPeakProminence', 0);
-min_peak_prominence = std(proms);
+% min_peak_prominence = std(proms);
+proms_sorted = sort(proms);
+threshold_idx = find(proms_sorted >= mean(proms), 1);
+min_peak_prominence = proms_sorted(threshold_idx);
 
 % Finding peaks in the middle of dispersion curve for k = 0 to know how
 % many branches there are
 [~, E_branches, width_branches, ~] = ...
     findpeaks(smooth(intensity_middle_col), energy, ...
     'MinPeakProminence', min_peak_prominence);
+
+if size(E_branches, 1) > 3
+    branches{1} = data;
+    branches_energy{1} = energy;
+    return;
+end
 
 % Designating branch boundaries based on peaks found
 branch_bounderies = zeros(size(E_branches, 1) + 1, 1);
