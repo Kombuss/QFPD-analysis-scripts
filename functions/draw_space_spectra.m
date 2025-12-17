@@ -1,4 +1,4 @@
-function [fig] = draw_space_spectra(x, energy, data, space, fig_visibility)
+function [fig] = draw_space_spectra(x, energy, data, space, fig_visibility, x_axis_limits, y_axis_limits)
 
 % draw_space_spectra - Plot polariton spectra
 %   This function draws spectra in k-space or r-space
@@ -20,17 +20,27 @@ function [fig] = draw_space_spectra(x, energy, data, space, fig_visibility)
 %   Name-Value Arguments
 %       fig_visibility - State of figures visibility
 %           "off" (default) | "on"
+%       x_axis_limits - Limits for x-axis
+%           [min(energy) max(energy)] (default) | double array
+%       y_axis_limits - Limits for y-axis
+%           [min(x) max(x)] (default) | double array
 %
 %   Output Arguments
 %       fig - Figure with plotted data
 %           figure
 %
 
-% Setting default value for figure visibility
+% Setting default value for figure visibility and axes limits
  if ~exist('fig_visibility','var')
       fig_visibility = "off";
  end
-
+ if ~exist('x_axis_limits','var')
+      x_axis_limits = [min(x) max(x)];
+ end
+ if ~exist('y_axis_limits','var')
+      y_axis_limits = [min(energy) max(energy)];
+ end
+ 
 % Creating figure and plotting all the data
 fig = figure("Visible", fig_visibility);
 fig.Theme = "light";
@@ -58,6 +68,10 @@ end
 
 % Setting up y-axis label
 ylabel('Energy (eV)');
+
+% Setting up x-axis and y-axis limits
+xlim(x_axis_limits);
+ylim(y_axis_limits);
 
 % Moving axis markers to the surface
 set(gca,'layer','top');
