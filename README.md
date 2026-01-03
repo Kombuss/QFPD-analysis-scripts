@@ -40,6 +40,7 @@ The live script can be used for:
 - Plotting data and saving plotted figures
 - Extracting points of high intensity for further analysis in another software such as OriginPro®
 - Plotting extracted points onto the figures and saving them
+- Extracting and plotting energy distribution
 
 ### File naming standard
 
@@ -75,6 +76,7 @@ Files with neutral density filter transmission data from [Thorlabs®](https://ww
 - [x] Plotting extracted points onto the figures
 - [ ] Plotting dispersion fit results onto the figures
 - [ ] Power series analysis
+- [x] Extracting and plotting energy distribution
 
 ## Authors
 
