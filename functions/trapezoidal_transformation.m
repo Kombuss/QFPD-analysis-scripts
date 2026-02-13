@@ -1,4 +1,4 @@
-function [data_trans] = trapezoidal_transformation(energy, data)
+function [data_trans] = trapezoidal_transformation_new(energy, data)
 
 % trapezoidal_transformation - Perform trapezoidal transformation
 %   This function performs trapezoidal transformation for a given data to 
@@ -18,19 +18,22 @@ function [data_trans] = trapezoidal_transformation(energy, data)
 %           vector
 %
 
-% Determining the shift
+% Defining variables crucial for transformation
 E_max = max(energy);
-E_min = min(energy);
-factor_trap = E_min/E_max;
-NY = size(data,1);
-NX = size(data,2);
-shift = 0.5*(NX-ceil(NX*factor_trap));
+[NY, NX] = size(data);
+x0 = (NX+1)/2;
+x_new = 1:NX;
+data_trans = zeros(size(data));
 
-% Setting moving and fixed points for transformation
-moving_points = [1 1; NX 1; 1 NY; NX NY];
-fixed_points = [1+shift 1; NX-shift 1; 1 NY; NX NY];
+% Iterating through rows
+for i = 1:NY
 
-% Performing trapezoidal transformation
-tform = fitgeotform2d(moving_points, fixed_points, 'pwl');
-RA = imref2d([NY NX], [1 NX], [1 NY]);
-[data_trans,~] = imwarp(data, tform, 'OutputView', RA);
+    % Determining the shift
+    scale = energy(i) / E_max;
+
+    % X coordinates, that are mapped to the new grid 
+    x_old = (x_new - x0)/scale + x0;
+
+    % Interpolation
+    data_trans(i,:) = interp1(1:NX, data(i,:), x_old, 'linear', 0);
+end

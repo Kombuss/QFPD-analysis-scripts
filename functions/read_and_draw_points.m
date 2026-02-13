@@ -24,6 +24,8 @@ for i = 1:length(files_with_points)
     filename = files_with_points(i).name;
     if str2double(filename(1:2)) == str2double(file.name(1:2))
         valid_files(i) = i;
+    elseif string(filename(1:2)) == string(file.name(1:2))
+        valid_files(i) = i;
     end
 end
 files_with_points(valid_files == 0) = [];

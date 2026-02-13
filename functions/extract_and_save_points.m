@@ -35,7 +35,7 @@ for i = 1:size(branches, 2)
 
     % Opening file for saving fit results and writing headline
     file_save_fit = string(path) + "\extracted_points\" + ...
-        string(file_name(1:3)) + string(i) + "_branch_fit.txt";
+        string(file_name(1:2)) + '_' + string(i) + "_branch_fit.txt";
     open_file = fopen(file_save_fit, 'w');
     fprintf(open_file, ...
         '%20s\t %20s\t %20s\t %20s\t %20s\t %20s\t %20s\t %20s\t \n', ...
@@ -80,7 +80,7 @@ for i = 1:size(branches, 2)
         elseif size(E_peak, 1) == 1
             number_of_peaks = 1;
         else
-            max_prom_idx = find(prom==max(prom));
+            max_prom_idx = find(prom==max(prom), 1);
             intensity = intensity(max_prom_idx);
             E_peak = E_peak(max_prom_idx);
             width_E_peak = width_E_peak(max_prom_idx);
