@@ -1,4 +1,4 @@
-function [data_trans] = trapezoidal_transformation_new(energy, data)
+function [data_trans] = trapezoidal_transformation(energy, data)
 
 % trapezoidal_transformation - Perform trapezoidal transformation
 %   This function performs trapezoidal transformation for a given data to 
