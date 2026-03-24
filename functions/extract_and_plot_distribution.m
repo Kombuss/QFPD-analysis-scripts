@@ -84,8 +84,8 @@ for i = 1:ceil(size(energy,1)/2)
         energy_avg(i) = energy(i);
         int_avg(i) = int(i);
     else
-    energy_avg(i) = (energy(i)+energy(end+1-i))/2;
-    int_avg(i) = (int(i)+int(end+1-i))/2;
+        energy_avg(i) = (energy(i)+energy(end+1-i))/2;
+        int_avg(i) = (int(i)+int(end+1-i))/2;
     end
 end
 
@@ -105,10 +105,13 @@ hold on;
 
 % Setting x and y-axis labels
 xlabel('E - E_{0} (meV)');
-ylabel('N(E) (cts/s)')
+ylabel('N(E) (cts/s)');
 
 % Setting up x-axis limits
-xlim([min(energy_diff), max(energy_diff)])
+xlim([min(energy_diff), max(energy_diff)]);
+
+% Setting yscale
+yscale('log');
 
 % Finishing further changes on the same plot
 hold off;
