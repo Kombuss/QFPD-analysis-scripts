@@ -68,16 +68,6 @@ Files with neutral density filter transmission data from [Thorlabs®](https://ww
 - Forth and fifth characters are units and tenths of an OD value of a filter
 - Example: NE530B-B.xlsx
 
-
-### Things to implement
-
-- [ ] R-space and k-space image (openslit) visualization
-- [ ] Generating animation of plotted graphs
-- [x] Plotting extracted points onto the figures
-- [ ] Plotting dispersion fit results onto the figures
-- [ ] Power series analysis
-- [x] Extracting and plotting energy distribution
-
 ## Authors
 
 - **Piotr Sieradzki** - [Kombuss](https://github.com/Kombuss)
