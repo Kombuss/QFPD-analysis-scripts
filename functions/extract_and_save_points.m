@@ -115,3 +115,58 @@ for i = 1:size(branches, 2)
     % Closing file in which fit results where saved
     fclose(open_file);    
 end
+
+% Searching for all saved files and considering only extracted points
+files_to_merge = dir(fullfile(string(path) + ...
+    '\extracted_points', '*.txt'));
+
+files_to_delete = [];
+
+for i = 1:size(files_to_merge, 1)
+    if contains(files_to_merge(i).name, '_branch_fit') == 0
+        files_to_delete = [files_to_delete, i];
+    end
+end
+
+files_to_merge(files_to_delete) = [];
+
+% Opening file to write all extracted points into and reading all files
+% with extracted points
+merged_file = fopen(string(string(path) + ...
+    "\extracted_points\") + "all_branches.txt", 'w');
+fprintf(merged_file, [repmat('%20s\t %20s\t %20s\t %20s\t %20s\t ', 1, ...
+    size(files_to_merge, 1)),'\n'], repmat(["Wavevector [um^-1]", ...
+    "Energy [eV]", "Intensity [arb.u.]", "FWHM [eV]", "R^2 [arb.u.]"], ...
+    1,size(files_to_merge, 1)));
+
+for i = 1:size(files_to_merge, 1)
+    file_open = fopen(string(string(path) + ...
+    '\extracted_points') + "\" + ...
+        string(files_to_merge(i).name), 'r');
+    file_content{i} = cell2mat(textscan(file_open, ...
+        '%f %f %*f %f %*f %f %*f %f', 'HeaderLines', 1));
+end
+
+% Filling matrices to the same size
+max_size = 0;
+
+for i = 1:size(file_content, 2)
+    if size(file_content{i},1) > max_size
+        max_size = size(file_content{i},1);
+    end
+end
+
+for i = 1:size(file_content, 2)
+    content_to_fill = file_content{i};
+    for j = 1:(max_size-size(file_content{i},1)) 
+        content_to_fill = [content_to_fill; NaN,NaN,NaN,NaN,NaN];
+    end
+    file_content(i) = {content_to_fill};
+end
+
+% Merging content of all files into one
+merged_data = cat(2, file_content{:});
+
+fprintf(merged_file, [repmat('%.15f\t ', 1, size(merged_data, 2)), '\n'], flip(rot90(merged_data)));
+
+fclose('all');
