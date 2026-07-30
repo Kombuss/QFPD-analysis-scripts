@@ -36,8 +36,8 @@ files_with_points = dir(fullfile(path, '*.txt'));
 file_save = string(file.folder) + "\energy_distribution_points\" + ...
     string(file.name(1:3)) + "energy_distribution.txt";
 open_file = fopen(file_save, 'w');
-fprintf(open_file, '%20s\t %20s\t \n', 'Energy [meV]', ...
-    'Intensity [arb.u.]');
+fprintf(open_file, '%20s\t %20s\t %20s\t \n', 'Energy [meV]', ...
+    'Intensity [arb.u.]', 'R^2 [arb.u.]');
 
 % Checking which files are valid, that is which have matching file number
 % in their name and are points of lower branch
@@ -69,23 +69,28 @@ for i = 1:length(files_with_points)
         disp('Energy for k=0 not found (assumed E0 = 0).')
     end
     int = data{4};
+    r_2= data{8};
 end
 
 % Creating matrices
 energy_avg = NaN(ceil(size(energy,1)/2),1);
 int_avg = NaN(ceil(size(energy,1)/2),1);
+r_2_avg = NaN(ceil(size(energy,1)/2),1);
 
-% Averaging energies and intensities for opposites wavevectors
+% Averaging energies, intensities and R^2 for opposites wavevectors
 for i = 1:ceil(size(energy,1)/2)
     if isnan(energy(i))
         energy_avg(i) = energy(end+1-i);
         int_avg(i) = int(end+1-i);
+        r_2_avg(i) = r_2(end+1-i);
     elseif isnan(energy(end+1-i))
         energy_avg(i) = energy(i);
         int_avg(i) = int(i);
+        r_2_avg(i) = r_2(i);
     else
         energy_avg(i) = (energy(i)+energy(end+1-i))/2;
         int_avg(i) = (int(i)+int(end+1-i))/2;
+        r_2_avg(i) = (r_2(i)+r_2(end+1-i))/2;
     end
 end
 
@@ -94,6 +99,7 @@ end
 int_sorted = int_avg(energy_order);
 energy_diff = energy_sorted - energy_k0;
 energy_diff = energy_diff*10^3;
+r_2_sorted = r_2_avg(energy_order);
 
 % Creating figure and plotting all the data
 fig = figure("Visible", fig_visibility);
@@ -119,12 +125,12 @@ hold off;
 % Saving energy distribution points
 for i = 1:size(energy_diff,1)
     if ~isnan(energy_diff(i))
-        fprintf(open_file, '%20s\t %20s\t \n', num2str(energy_diff(i)), ...
-            num2str(int_sorted(i)));
+        fprintf(open_file, '%20s\t %20s\t %20s\t \n', num2str(energy_diff(i)), ...
+            num2str(int_sorted(i)), num2str(r_2_sorted(i)));
     end
 end
 
-% Searching for all saved files and deleting not energy distributions
+% Searching for all saved files and considering only energy distributions
 files_to_merge = dir(fullfile(string(file.folder) + ...
     '\energy_distribution_points', '*.txt'));
 
@@ -142,16 +148,19 @@ files_to_merge(files_to_delete) = [];
 % with energy distributions
 merged_file = fopen(string(string(file.folder) + ...
     "\energy_distribution_points\") + "all_distributions.txt", 'w');
+fprintf(merged_file, [repmat('%20s\t %20s\t %20s\t ', 1, ...
+    size(files_to_merge, 1)),'\n'], repmat(["Energy [meV]", ...
+    "Intensity [arb.u.]", "R^2 [arb.u.]"],1,size(files_to_merge, 1)));
 
 for i = 1:size(files_to_merge, 1)
     file_open = fopen(string(string(file.folder) + ...
     '\energy_distribution_points') + "\" + ...
         string(files_to_merge(i).name), 'r');
-    file_content{i} = cell2mat(textscan(file_open, '%f %f', ...
+    file_content{i} = cell2mat(textscan(file_open, '%f %f %f', ...
         'HeaderLines', 1));
 end
 
-% Filling matrices to same size
+% Filling matrices to the same size
 max_size = 0;
 
 for i = 1:size(file_content, 2)
@@ -163,7 +172,7 @@ end
 for i = 1:size(file_content, 2)
     content_to_fill = file_content{i};
     for j = 1:(max_size-size(file_content{i},1)) 
-        content_to_fill = [content_to_fill; [NaN,NaN]];
+        content_to_fill = [content_to_fill; [NaN,NaN,NaN]];
     end
     file_content(i) = {content_to_fill};
 end
@@ -171,6 +180,6 @@ end
 % Merging content of all files into one
 merged_data = cat(2, file_content{:});
 
-fprintf(merged_file, [repmat('%.15f ', 1, size(merged_data, 2)), '\n'], flip(rot90(merged_data)));
+fprintf(merged_file, [repmat('%.15f\t ', 1, size(merged_data, 2)), '\n'], flip(rot90(merged_data)));
 
 fclose('all');
