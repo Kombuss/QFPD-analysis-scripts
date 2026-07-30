@@ -46,7 +46,7 @@ for i = 1:size(branches, 2)
     % Setting up data and energy for fitting
     data_to_fit = branches{i};
     energy_to_fit = branches_energy{i};
-
+    
     % Iterating through columns of intensity for different wavevectors  
     for j = 1:size(data_to_fit, 2)
 
@@ -55,11 +55,33 @@ for i = 1:size(branches, 2)
         intensity_one_col = data_to_fit(:, j);
         [~, ~, ~, proms] = findpeaks(intensity_one_col, energy_to_fit, ...
             'MinPeakProminence', 0);
-        min_peak_prominence = max(proms);
-        if isempty(min_peak_prominence) || ...
-                extract_points_sensitivity*min_peak_prominence<mean(proms)
-            min_peak_prominence = 0;
+        max_prom = max(proms);
+        if isempty(proms)
+            fprintf(open_file, ...
+                ['%20s\t %20s\t %20s\t %20s\t %20s\t %20s\t %20s\t ' ...
+                '%20s\t \n'], num2str(k(j),15), num2str(''), ...
+                num2str(''), num2str(''), num2str(''), num2str(''), ...
+                num2str(''), num2str(''));                                  
+            continue;
         end
+        
+        noise_proms = proms(proms < max_prom);
+        if isempty(noise_proms)
+            mean_noise_prom = 0;
+        else
+            mean_noise_prom = mean(noise_proms);
+        end
+        
+        if extract_points_sensitivity * max_prom <= mean_noise_prom
+            fprintf(open_file, ...
+                ['%20s\t %20s\t %20s\t %20s\t %20s\t %20s\t %20s\t ' ...
+                '%20s\t \n'], num2str(k(j),15), num2str(''), ...
+                num2str(''), num2str(''), num2str(''), num2str(''), ...
+                num2str(''), num2str(''));                                  
+            continue;
+        end
+
+        min_peak_prominence = max_prom;
 
         % Finding peaks in column j and checking number of peaks found.
         % Because data is already divided into branches, there shouldn't be
@@ -109,7 +131,6 @@ for i = 1:size(branches, 2)
             num2str(fit_result.a,15), ...
             num2str(a_error,15), num2str(fit_result.c,15), ...
             num2str(c_error,15), num2str(goodness.rsquare,15));
-        
     end
 
     % Closing file in which fit results where saved
