@@ -41,6 +41,7 @@ The live script can be used for:
 - Extracting points of high intensity for further analysis in another software such as OriginPro®
 - Plotting extracted points onto the figures and saving them
 - Extracting and plotting energy distribution
+- Extracting emission characteristics from power series
 
 ### File naming standard
 
