@@ -55,6 +55,7 @@ Files with data for analysis (.spe):
 - Somewhere in the name: "kspace" | "k-space" | "k_space" | "rspace" | "r-space" | "r_space" - indicating measured space
 - If neutral density filter was used somewhere in the name: "OD#" | "#OD" | "ND#" | "#ND" - optical density value
 - Fraction optical density values should be separeted by: "." | "," | "p"
+- Files for power series analysis should indicate used power by containing somewhere in the name: "_##mW_" | "_##uW_"
 - All strings should be separated by: "_"
 - Example: 05_kspace_2,2mW_l766nm_1200_c810nm_15s_longpass800_FES800_up7,05mm_lr22,7mm_OD4.spe
 
